@@ -1,6 +1,6 @@
-require 'spec_helper'
+require_relative './../support/rack_context'
 
-describe App, "/" do
+describe "/" do
 
   include_context "rack"
 
