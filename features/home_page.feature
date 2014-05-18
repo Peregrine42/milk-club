@@ -1,5 +1,7 @@
 Feature: the home page
 
+  @wip
   Scenario: showing the home page
+    Given there are members in the database
     When I visit the home page
-    Then the home page is displayed
+    Then I see the members who haven't paid
