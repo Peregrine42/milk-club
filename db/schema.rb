@@ -11,10 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140518142310) do
+ActiveRecord::Schema.define(version: 20140518153235) do
+
+  create_table "due_totals", force: true do |t|
+    t.decimal "due", precision: 10, scale: 0
+  end
 
   create_table "members", force: true do |t|
     t.string "name"
+  end
+
+  create_table "payments", force: true do |t|
+    t.integer "member_id"
+    t.decimal "amount",    precision: 10, scale: 0
   end
 
 end

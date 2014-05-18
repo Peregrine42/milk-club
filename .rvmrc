@@ -1,1 +1,1 @@
-rvm --create use ruby-2.1.2@milk-club
+rvm --create use ruby-2.1.1@milk-club

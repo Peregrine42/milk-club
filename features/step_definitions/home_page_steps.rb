@@ -1,7 +1,12 @@
-Given "there are members in the database" do
-  Member.create(name: "Richard")
+Given "members, payments and months are in the database" do
+  a = Member.create(name: "Richard")
+  b = Member.create(name: "Joe")
   Member.create(name: "Duncan")
-  Member.create(name: "Joe")
+
+  a.payments.create(amount: 1)
+  b.payments.create(amount: 1)
+
+  DueTotal.create(due: 1)
 end
 
 When "I visit the home page" do
@@ -9,7 +14,7 @@ When "I visit the home page" do
 end
 
 Then "I see the members who haven't paid" do
-  expect(page).to have_content("Richard")
+  expect(page).to have_no_content("Richard")
+  expect(page).to have_no_content("Joe")
   expect(page).to have_content("Duncan")
-  expect(page).to have_content("Joe")
 end

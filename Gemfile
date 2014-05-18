@@ -10,4 +10,5 @@ group :development, :test do
   gem 'cucumber'
   gem 'capybara'
   gem 'shotgun'
+  gem 'debugger'
 end
