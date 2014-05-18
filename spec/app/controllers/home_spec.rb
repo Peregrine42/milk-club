@@ -4,7 +4,7 @@ describe "/" do
 
   include_context "rack"
 
-  it "shows the users who have not paid" do
+  xit "shows the users who have not paid" do
     report = double(:report, names: ["Bob", "Fred"])
     MembersReport.stub(:new).and_return(report)
     get '/'
