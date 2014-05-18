@@ -1,10 +1,8 @@
 require 'sinatra'
-require 'active_record'
 require 'mysql'
+require 'sinatra/activerecord'
 
-environment = ENV['RACK_ENV'] || 'development'
-dbconfig    = YAML.load(File.read('config/database.yml'))
-ActiveRecord::Base.establish_connection dbconfig[environment]
+ActiveRecord::Base.logger = nil
 
 class App < Sinatra::Base
 

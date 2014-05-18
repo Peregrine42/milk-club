@@ -1,7 +1,7 @@
 Given "there are members in the database" do
-  Member.create("Richard")
-  Member.create("Duncan")
-  Member.create("Joe")
+  Member.create(name: "Richard")
+  Member.create(name: "Duncan")
+  Member.create(name: "Joe")
 end
 
 When "I visit the home page" do
