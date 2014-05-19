@@ -1,7 +1,8 @@
 class App
 
   get '/' do
-    erb :home
+    @unpaid = MembersReport.new.unpaid
+    erb :members_report
   end
 
 end

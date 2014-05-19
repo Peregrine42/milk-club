@@ -1,6 +1,5 @@
 Feature: the home page
 
-  @wip
   Scenario: showing the home page
     Given members, payments and months are in the database
     When I visit the home page

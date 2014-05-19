@@ -1,0 +1,6 @@
+Members who have not yet paid this month:
+<ul>
+  <% @unpaid.each do |member| %>
+    <li><%= member.name %></li>
+  <% end %>
+</ul>

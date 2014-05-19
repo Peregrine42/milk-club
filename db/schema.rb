@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(version: 20140518153235) do
 
   create_table "due_totals", force: true do |t|
-    t.decimal "due", precision: 10, scale: 0
+    t.decimal "amount", precision: 10, scale: 0
   end
 
   create_table "members", force: true do |t|

@@ -1,12 +1,12 @@
 Given "members, payments and months are in the database" do
-  a = Member.create(name: "Richard")
-  b = Member.create(name: "Joe")
+  richard = Member.create(name: "Richard")
+  joe     = Member.create(name: "Joe")
   Member.create(name: "Duncan")
 
-  a.payments.create(amount: 1)
-  b.payments.create(amount: 1)
+  richard.payments.create(amount: 1)
+  joe.payments.create(amount: 1)
 
-  DueTotal.create(due: 1)
+  DueTotal.create(amount: 1)
 end
 
 When "I visit the home page" do
