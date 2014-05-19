@@ -1,4 +1,4 @@
-require_relative "../../../app"
+require 'spec_helper'
 
 describe MembersReport do
 

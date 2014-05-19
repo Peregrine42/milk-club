@@ -5,4 +5,9 @@ class Member < ActiveRecord::Base
     payments.inject(0) { |sum, p| sum += p.amount }
   end
 
+  def owes
+    total = DueTotal.most_recent
+    total - total_paid
+  end
+
 end

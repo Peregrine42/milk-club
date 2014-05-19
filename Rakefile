@@ -1,3 +1,5 @@
+ENV['RACK_ENV'] ||= 'test'
+
 require 'cucumber/rake/task'
 require 'rspec/core/rake_task'
 require 'sinatra/activerecord/rake'
@@ -10,4 +12,4 @@ RSpec::Core::RakeTask.new(:spec) do |t|
   t.rspec_opts = "--color -d"
 end
 
-task :default => [:features, :spec]
+task :default => [:spec, :features]

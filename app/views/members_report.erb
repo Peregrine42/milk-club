@@ -1,6 +1,6 @@
-Members who have not yet paid this month:
+Outstanding Payments:
 <ul>
   <% @unpaid.each do |member| %>
-    <li><%= member.name %></li>
+    <li><%= member.name %> (owes: £<%= member.owes %>)</li>
   <% end %>
 </ul>
