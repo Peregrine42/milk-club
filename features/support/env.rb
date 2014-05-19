@@ -13,6 +13,6 @@ Before do
   DatabaseCleaner.start
 end
 
-Before do
+After do
   DatabaseCleaner.clean
 end

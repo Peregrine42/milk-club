@@ -1,0 +1,9 @@
+Members:
+<form action="/payments" method="post">
+  <ul>
+    <% @members.each do |member| %>
+      <li><%= member.name %>: <input type="text" name="amount[<%= member.id %>]"</li>
+    <% end %>
+  </ul>
+  <input type="submit" value="add payments">
+</form> 

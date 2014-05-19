@@ -1,8 +1,6 @@
-require_relative './../../support/rack_context'
+require "spec_helper"
 
 describe "/" do
-
-  include_context "rack"
 
   it "shows the users who have not paid" do
     bob  = double

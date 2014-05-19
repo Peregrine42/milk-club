@@ -10,4 +10,9 @@ class Member < ActiveRecord::Base
     total - total_paid
   end
 
+  def add_payment a
+    return if a == 0
+    payments.create(amount: a)
+  end
+
 end

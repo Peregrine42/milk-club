@@ -16,4 +16,17 @@ describe Member do
     expect(a.owes).to eq 1
   end
 
+  it "can add a payment" do
+    a = Member.new
+    old_length = a.payments.length
+    a.add_payment(5)
+    expect(a.payments.length).to eq old_length + 1
+  end
+
+  it "ignores payments of 0" do
+    a = Member.new
+    old_length = a.payments.length
+    a.add_payment(0.0)
+    expect(a.payments.length).to eq old_length
+  end
 end

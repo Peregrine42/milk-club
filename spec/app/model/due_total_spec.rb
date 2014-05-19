@@ -1,4 +1,3 @@
-require_relative "../../../app"
 require 'spec_helper'
 
 describe DueTotal do

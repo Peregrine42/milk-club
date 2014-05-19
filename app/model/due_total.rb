@@ -1,9 +1,9 @@
 class DueTotal < ActiveRecord::Base
 
   def self.most_recent
-    last = all.last
-    return 0 unless last
-    return last.amount
+    last_item = all.last
+    return 0 unless last_item
+    return last_item.amount
   end
 
 end
