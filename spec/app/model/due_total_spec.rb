@@ -1,4 +1,5 @@
 require_relative "../../../app"
+require 'spec_helper'
 
 describe DueTotal do
   it "can give the most recent total due" do
@@ -6,5 +7,9 @@ describe DueTotal do
     DueTotal.create(amount: 8)
 
     expect(DueTotal.most_recent).to eq 8
+  end
+
+  it "gives back 0 if there are no totals yet" do
+    expect(DueTotal.most_recent).to eq 0
   end
 end
