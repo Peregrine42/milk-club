@@ -12,6 +12,7 @@ class Member < ActiveRecord::Base
 
   def add_payment a
     return if a == 0
+    save!
     payments.create(amount: a)
   end
 
