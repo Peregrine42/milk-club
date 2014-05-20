@@ -6,7 +6,8 @@ class App
   end
 
   post '/payments' do
-    PaymentUpdate.update params["amount"]
+    PaymentUpdate.update params["payment"]
     redirect '/'
   end
+
 end

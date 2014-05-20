@@ -1,8 +1,7 @@
 class MembersReport
 
   def unpaid
-    total = DueTotal.most_recent
-    Member.all.select { |m| m.total_paid < total }
+    Member.all.select { |m| m.owes > 0 }
   end
 
 end

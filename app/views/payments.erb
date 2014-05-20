@@ -2,7 +2,7 @@ Members:
 <form action="/payments" method="post">
   <ul>
     <% @members.each do |member| %>
-      <li><%= member.name %>: <input type="text" name="amount[<%= member.id %>]"</li>
+      <li><%= member.name %>: <input type="text" name="payment[<%= member.id %>][amount]"><input type="checkbox" name="payment[<%= member.id %>][skipped]"></li>
     <% end %>
   </ul>
   <input type="submit" value="add payments">
