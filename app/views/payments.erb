@@ -1,9 +1,18 @@
-Members:
+<h2>Payments</h2>
 <form action="/payments" method="post">
-  <ul>
+  <table class='table table-striped'>
+    <tr>
+      <th>Member</th>
+      <th>Amount Paid</th>
+      <th>Skip Payment</th>
+    </tr>
     <% @members.each do |member| %>
-      <li><%= member.name %>: <input type="text" name="payment[<%= member.id %>][amount]"><input type="checkbox" name="payment[<%= member.id %>][skipped]"></li>
+      <tr>
+        <td><%= member.name %></td>
+        <td><input type="text" name="payment[<%= member.id %>][amount]"></td>
+        <td><input type="checkbox" name="payment[<%= member.id %>][skipped]"></td>
+      </tr>
     <% end %>
-  </ul>
-  <input type="submit" value="add payments">
+  </table>
+  <input type="submit" value="Add payments">
 </form> 

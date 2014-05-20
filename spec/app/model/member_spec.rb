@@ -40,3 +40,21 @@ describe Member do
     expect(member.payments.length).to eq old_length
   end
 end
+
+describe Member, "#class_for_balance" do
+  let(:member) { Member.create }
+
+  it "returns 'success' if the balance is positive" do
+    member.payments.create(amount: 2)
+    expect(member.class_for_balance).to eq('success')
+  end
+
+  it "returns 'danger' if the balance is negative" do
+    member.dues.create(amount: 2)
+    expect(member.class_for_balance).to eq('danger')
+  end
+
+  it "returns an empty string if the balance is zero" do
+    expect(member.class_for_balance).to eq('')
+  end
+end

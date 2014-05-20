@@ -1,6 +1,17 @@
-Members:
-<ul>
+<h2>Members</h2>
+
+<div class='col-md-offset-2 col-md-3'>
+<table class='table table-striped'>
+  <tr>
+    <th class='col-md-2' >Name</th>
+    <th class='col-md-1' >Balance (£) </th>
+  </tr>
+
   <% @members.each do |member| %>
-    <li><%= member.name %> (balance: £<%= member.balance %>)</li>
+    <tr>
+      <td><%= member.name %> </td>
+      <td class='<%= member.class_for_balance %>'><%= member.balance %></td>
+    </tr>
   <% end %>
-</ul>
+</table>
+</div>

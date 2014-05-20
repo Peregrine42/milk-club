@@ -14,6 +14,12 @@ class Member < ActiveRecord::Base
     total_paid - total_owed
   end
 
+  def class_for_balance
+    return "" if balance == 0
+    return 'success' if balance > 0
+    'danger'
+  end
+
   def add_payment a
     return if a == 0
     payments.create(amount: a)
