@@ -1,6 +1,5 @@
 Feature: adding new dues for each user to start a new month
 
-  @wip
   Scenario: it's the start of the month
     Given the system's database is populated
     When  I visit the new amount due page

@@ -3,16 +3,9 @@ require "spec_helper"
 describe "/" do
 
   it "shows the users who have not paid" do
-    bob  = double
-    bob.stub(:name) { "Bob"  }
-    bob.stub(:owes) { 4 }
-
-    fred = double
-    fred.stub(:name) { "Fred" }
-    fred.stub(:owes) { 4 }
-    
-    report = double(:report, unpaid: [bob, fred])
-    MembersReport.stub(:new).and_return(report)
+    bob  = double(:bob,  name: "Bob",  balance: 4 )
+    fred = double(:fred, name: "Fred", balance: 2 )
+    Member.stub(:all).and_return([bob, fred])
 
     get '/'
     expect(last_response.body).to match "Bob"

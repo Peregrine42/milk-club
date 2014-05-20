@@ -15,7 +15,7 @@ describe Member do
     member.payments.create(amount: 1)
     member.dues.create(amount: 2)
     member.dues.create(amount: 3)
-    expect(member.owes).to eq 2
+    expect(member.balance).to eq(-2)
   end
 
   it "can skip a payment" do

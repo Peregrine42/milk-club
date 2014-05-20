@@ -2,7 +2,7 @@ class App
 
   get '/' do
     @members = Member.all 
-    erb :members_report
+    erb :homepage
   end
 
 end
