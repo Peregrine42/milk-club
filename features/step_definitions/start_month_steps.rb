@@ -15,7 +15,7 @@ When "I click the add amount due button" do
 end
 
 Then "everyone should owe at least the amount added" do
-  Member.find_by(name: "Richard").owes Fee.most_recent
-  Member.find_by(name: "Rupert").owes  Fee.most_recent
-  Member.find_by(name: "Duncan").owes  Fee.most_recent
+  expect(Member.find_by(name: "Richard").owes).to eq Fee.most_recent
+  expect(Member.find_by(name: "Rupert").owes).to  eq Fee.most_recent
+  expect(Member.find_by(name: "Duncan").owes).to  eq Fee.most_recent
 end

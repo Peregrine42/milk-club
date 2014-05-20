@@ -2,33 +2,41 @@ require 'spec_helper'
 
 describe Member do
 
+  let(:member) { Member.create }
+
   it "can say how much has been paid in total by the member" do
-    a = Member.create(name: "blah")
-    a.payments.create(amount: 5)
-    a.payments.create(amount: 2)
-    expect(a.total_paid).to eq 7
+    member.payments.create(amount: 5)
+    member.payments.create(amount: 2)
+    expect(member.total_paid).to eq 7
   end
 
   it "can work out how much this member owes" do
-    a = Member.create
-    a.payments.create(amount: 2)
-    a.payments.create(amount: 1)
-    a.dues.create(amount: 2)
-    a.dues.create(amount: 3)
-    expect(a.owes).to eq 2
+    member.payments.create(amount: 2)
+    member.payments.create(amount: 1)
+    member.dues.create(amount: 2)
+    member.dues.create(amount: 3)
+    expect(member.owes).to eq 2
+  end
+
+  it "can skip a payment" do
+    member.dues.create(amount: 1)
+    member.skip_payment
+    expect(member.dues.last.amount).to eq 0
+  end
+
+  it "does nothing if there are no dues to skip" do
+    expect(member.skip_payment).to eq false
   end
 
   it "can add a payment" do
-    a = Member.create
-    old_length = a.payments.length
-    a.add_payment(5)
-    expect(a.payments.length).to eq old_length + 1
+    old_length = member.payments.length
+    member.add_payment(5)
+    expect(member.payments.length).to eq old_length + 1
   end
 
   it "ignores payments of 0" do
-    a = Member.create
-    old_length = a.payments.length
-    a.add_payment(0.0)
-    expect(a.payments.length).to eq old_length
+    old_length = member.payments.length
+    member.add_payment(0.0)
+    expect(member.payments.length).to eq old_length
   end
 end

@@ -23,4 +23,12 @@ class Member < ActiveRecord::Base
     return if d == 0
     dues.create(amount: d)
   end
+
+  def skip_payment
+    last_due = dues.last
+    return false if last_due.nil?
+    last_due.amount = 0
+    last_due.save!
+    true
+  end
 end

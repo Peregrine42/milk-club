@@ -29,6 +29,6 @@ Then "the member should have a new payment" do
   expect(Member.find_by(name: "Richard").payments.last.amount).to eq 3
 end
 
-Then "the member should have a negative amount due equal to the current amount to be paid" do
-  expect(Member.find_by(name: "Richard").dues.last.amount).to eq(-1)
+Then  "the member should have no payment due for that month" do
+  expect(Member.find_by(name: "Richard").dues.last.amount).to eq(0)
 end

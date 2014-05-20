@@ -18,4 +18,4 @@ Feature: the payment page
     When  I visit the payment page
     And   I check the skip payment box
     And   I click the add button
-    Then  the member should have a negative amount due equal to the current amount to be paid
+    Then  the member should have no payment due for that month

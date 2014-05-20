@@ -22,7 +22,7 @@ describe "/payments" do
   end
 
   it "adds payments to those users with a non-zero value against their name" do
-    params = { "amount" => "blah" }
+    params = { "payment" => "blah" }
 
     PaymentUpdate.should_receive(:update).with("blah")
     post '/payments', params
