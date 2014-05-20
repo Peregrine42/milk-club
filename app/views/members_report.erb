@@ -1,6 +1,6 @@
-Outstanding Payments:
+Members:
 <ul>
-  <% @unpaid.each do |member| %>
-    <li><%= member.name %> (owes: £<%= member.owes %>)</li>
+  <% @members.each do |member| %>
+    <li><%= member.name %> (balance: £<%= member.balance %>)</li>
   <% end %>
 </ul>

@@ -11,19 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140520090944) do
+ActiveRecord::Schema.define(version: 20140520132704) do
 
   create_table "due_totals", force: true do |t|
     t.decimal "amount", precision: 10, scale: 0
   end
 
   create_table "dues", force: true do |t|
-    t.integer "member_id"
-    t.decimal "amount",    precision: 10, scale: 0
+    t.integer  "member_id"
+    t.decimal  "amount",     precision: 10, scale: 0
+    t.datetime "created_at"
   end
 
   create_table "fees", force: true do |t|
-    t.decimal "amount", precision: 10, scale: 0
+    t.decimal  "amount",     precision: 10, scale: 0
+    t.datetime "created_at"
   end
 
   create_table "members", force: true do |t|
@@ -31,8 +33,9 @@ ActiveRecord::Schema.define(version: 20140520090944) do
   end
 
   create_table "payments", force: true do |t|
-    t.integer "member_id"
-    t.decimal "amount",    precision: 10, scale: 0
+    t.integer  "member_id"
+    t.decimal  "amount",     precision: 10, scale: 0
+    t.datetime "created_at"
   end
 
 end

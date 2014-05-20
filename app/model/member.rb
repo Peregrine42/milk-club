@@ -10,8 +10,8 @@ class Member < ActiveRecord::Base
     dues.inject(0) { |sum, p| sum += p.amount }
   end
 
-  def owes
-    total_owed - total_paid
+  def balance
+    total_paid - total_owed
   end
 
   def add_payment a

@@ -1,7 +1,7 @@
 class App
 
   get '/' do
-    @unpaid = MembersReport.new.unpaid
+    @members = Member.all 
     erb :members_report
   end
 
