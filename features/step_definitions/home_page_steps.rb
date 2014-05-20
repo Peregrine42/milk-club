@@ -16,7 +16,7 @@ When "I visit the home page" do
 end
 
 Then "I see the balance for the members" do
-  expect(page).to have_content("Richard (balance: £0)")
-  expect(page).to have_content("Joe (balance: £0)")
-  expect(page).to have_content("Duncan (balance: £-1)")
+  expect(page).to have_content("Richard")
+  expect(page).to have_content("Joe")
+  expect(page).to have_content("Duncan")
 end

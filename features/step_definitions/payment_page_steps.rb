@@ -21,8 +21,7 @@ When "I check the skip payment box" do
 end
 
 When "I click the add button" do
-  expect(page).to have_button("add payments")
-  click_button "add payments"
+  click_button "Add payments"
 end
 
 Then "the member should have a new payment" do
