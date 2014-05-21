@@ -5,6 +5,7 @@ gem 'sinatra-flash'
 gem 'thin'
 gem 'sinatra-activerecord'
 gem 'mysql'
+gem 'iuser_auth',           :git => 'https://git.nat.bt.com/iuser_auth/iuser_auth.git'
 
 group :development, :test do
   gem 'rspec'
@@ -13,4 +14,5 @@ group :development, :test do
   gem 'shotgun'
   gem 'debugger'
   gem 'database_cleaner'
+  gem 'webmock'
 end
