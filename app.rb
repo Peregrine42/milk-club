@@ -16,6 +16,8 @@ class App < Sinatra::Base
   enable :sessions
   register Sinatra::Flash
 
+  extend AdminOnlyHelper
+  extend MemberOnlyHelper
 
   helpers AuthenticationHelper
 
