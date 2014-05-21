@@ -1,0 +1,22 @@
+<h2>Login</h2>
+<form method="post" action="/login" class="form-horizontal">
+  <div class="form-group">
+    <label for='ein' class='col-sm-2 control-label'>EIN</label>
+    <div class="col-sm-3">
+      <input name="user[ein]" class="form-control" type="text" id="ein" value="<%= params[:user][:ein] if params[:user] %>">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for='password' class='col-sm-2 control-label'>Password</label>
+    <div class="col-sm-3">
+      <input name="user[password]" class="form-control" type="password" id="password" value="<%= params[:user][:password] if params[:user] %>">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button class="btn btn-primary">Login</button>
+    </div>
+  </div>
+</form>

@@ -1,4 +1,4 @@
-class App
+class App < Sinatra::Base
 
   get '/' do
     @members = Member.all 

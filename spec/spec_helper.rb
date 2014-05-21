@@ -5,6 +5,8 @@ require 'rack/test'
 require 'capybara/rspec'
 include Rack::Test::Methods
 
+Dir[File.join(Sinatra::Application.root, 'spec', 'support', '**', '*.rb')].each { |f| require f }
+
 def app
   App
 end

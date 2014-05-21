@@ -1,7 +1,7 @@
 Given "members, payments and dues are in the database" do
-  richard = Member.create(name: "Richard")
-  joe     = Member.create(name: "Joe")
-  duncan  = Member.create(name: "Duncan")
+  richard = Member.create(name: "Richard", ein:'5', role:'Admin')
+  joe     = Member.create(name: "Joe", ein:'6', role:'User')
+  duncan  = Member.create(name: "Duncan", ein:'7', role:'User')
 
   richard.dues.create(amount: 1)
   joe.dues.create(amount: 1)

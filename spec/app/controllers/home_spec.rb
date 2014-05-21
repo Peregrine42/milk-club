@@ -7,7 +7,7 @@ describe "/" do
     fred = double(:fred, name: "Fred", balance: 2, class_for_balance: "")
     Member.stub(:all).and_return([bob, fred])
 
-    get '/'
+    get_as_admin '/'
     expect(last_response.body).to match "Bob"
     expect(last_response.body).to match "Fred"
   end

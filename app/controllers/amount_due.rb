@@ -1,4 +1,4 @@
-class App
+class App < Sinatra::Base
 
   get '/new_amount_due' do
     erb :new_amount_due

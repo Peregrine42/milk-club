@@ -14,8 +14,9 @@
 ActiveRecord::Schema.define(version: 20140520090944) do
 
   create_table "dues", force: true do |t|
-    t.integer "member_id"
-    t.decimal "amount",    precision: 10, scale: 0
+    t.integer  "member_id"
+    t.decimal  "amount",     precision: 10, scale: 0
+    t.datetime "created_at"
   end
 
   create_table "fees", force: true do |t|
@@ -25,6 +26,8 @@ ActiveRecord::Schema.define(version: 20140520090944) do
 
   create_table "members", force: true do |t|
     t.string "name"
+    t.string "ein"
+    t.string "role"
   end
 
   create_table "payments", force: true do |t|

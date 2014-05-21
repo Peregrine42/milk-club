@@ -1,0 +1,10 @@
+.login {
+  margin-top: 15px;
+  color: white;
+  display: block;
+  float: right;
+}
+
+.login > a {
+  color: #F6BB42;
+}

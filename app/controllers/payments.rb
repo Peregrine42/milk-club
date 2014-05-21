@@ -1,4 +1,4 @@
-class App
+class App < Sinatra::Base
   
   get '/payments' do
     @members = Member.all

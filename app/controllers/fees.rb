@@ -1,4 +1,4 @@
-class App
+class App < Sinatra::Base
 
   get '/fees' do
     @fee = Fee.most_recent

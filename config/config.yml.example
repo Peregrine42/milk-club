@@ -1,0 +1,20 @@
+development:
+  session_secret:         'IMPORTANT: ENTER A RANDOM STRING IN HERE'
+  crowd_details:
+    application_name:     'app_name'
+    application_password: 'app_password'
+    crowd_uri:            'https://collaborate.bt.com/crowd/services/SecurityServer'
+
+test:
+  session_secret:         'IMPORTANT: ENTER A RANDOM STRING IN HERE'
+  crowd_details:
+    application_name:     'app_name'
+    application_password: 'app_password'
+    crowd_uri:            'https://collaborate.bt.com/crowd/services/SecurityServer'
+
+production:
+  session_secret:         'IMPORTANT: ENTER A RANDOM STRING IN HERE'
+  crowd_details:
+    application_name:     'app_name'
+    application_password: 'app_password'
+    crowd_uri:            'https://collaborate.bt.com/crowd/services/SecurityServer'

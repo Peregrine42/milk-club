@@ -33,6 +33,11 @@
             <li ><a href='/new_amount_due'>New Month</a></li>
             <li ><a href='/fees'>Manage Fees</a></li>
           </ul>
+          <ul class="nav navbar-nav navbar-right col-md-3">
+            <% if current_user_logged_in? %>
+              <li><span class='login'><%= current_user.name %> - <%= current_user.role %> | <a href="/logout">Logout</a></span></li>
+            <% end %>
+          </ul>
         </div><!-- /.navbar-collapse -->
       </div>
     </nav>

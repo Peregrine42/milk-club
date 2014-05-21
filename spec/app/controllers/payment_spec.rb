@@ -15,7 +15,7 @@ describe "/payments" do
 
     Member.stub(:all).and_return([bob, fred])
 
-    get '/payments'
+    get_as_admin '/payments'
 
     expect(last_response.body).to match "Bob"
     expect(last_response.body).to match "Fred"
@@ -25,7 +25,7 @@ describe "/payments" do
     params = { "payment" => "blah" }
 
     PaymentUpdate.should_receive(:update).with("blah")
-    post '/payments', params
+    post_as_admin '/payments', params
   end
 
 end

@@ -1,5 +1,8 @@
 Feature: the payment page
 
+  Background:
+    Given I am logged in as an administrator
+
   Scenario: showing the payment page
     Given members, payments and dues are in the database
     When  I visit the payment page
