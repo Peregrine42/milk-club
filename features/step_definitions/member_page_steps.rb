@@ -4,8 +4,8 @@ Given "my payment history is in the database" do
   me.dues.create(amount: 2)
 end
 
-When "I visit the members page" do
-  visit '/members'
+When "I visit the my account page" do
+  visit '/my_account'
 end
 
 Then "I should see my payment history" do

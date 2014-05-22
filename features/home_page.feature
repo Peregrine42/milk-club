@@ -5,3 +5,9 @@ Feature: the home page
     Given members, payments and dues are in the database
     When I visit the home page
     Then I see the balance for the members
+
+  Scenario: showing the member's account
+    Given I am logged in
+    And   my payment history is in the database
+    When  I visit the my account page
+    Then  I should see my payment history

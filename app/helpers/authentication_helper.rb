@@ -5,7 +5,7 @@ module AuthenticationHelper
   end
 
   def current_user_logged_in?
-    !session[:name].nil?
+    !session[:ein].nil?
   end
 
   def redirect_unless_logged_in

@@ -13,10 +13,8 @@ class App < Sinatra::Base
         Member.new(ein: '99999999', name: "Fred Flintstone", role: 'Admin') :
         Authenticator.user_with_credentials(params[:user])
       session.clear
-      session[:name] = user.name
-      session[:role] = user.role
       session[:ein]  = user.ein
-      redirect '/'
+      redirect '/my_account'
     rescue AuthenticationException
       flash.now[:error] = 'Your user details are invalid'
       erb :'authentication/new'

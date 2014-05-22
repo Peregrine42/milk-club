@@ -70,6 +70,9 @@ class Member < ActiveRecord::Base
     true
   end
 
+  #def logged_in?
+    #session[:ein] == ein
+  #end
 
   #def admin?
     #(role != "User")

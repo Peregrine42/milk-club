@@ -45,13 +45,13 @@ end
 describe AuthenticationHelper, '#current_user_logged_in?' do
   let(:controller)  { AuthenticationHelperSpecThing.new }
 
-  it 'returns true if the session has a ein in it' do
-    session = {:name => 'a name'}
+  it 'returns true if the session has an ein in it' do
+    session = {:ein => 'a name'}
     controller.stub(:session).and_return(session)
     controller.current_user_logged_in?.should be_true
   end
 
-  it 'returns false if the session has a ein in it' do
+  it 'returns false if the session does not have an ein in it' do
     session = {}
     controller.stub(:session).and_return(session)
     controller.current_user_logged_in?.should be_false

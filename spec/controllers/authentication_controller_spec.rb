@@ -25,24 +25,14 @@ describe 'POST /login - successful login' do
     post '/login', 'user' => 'user_params'
   end
 
-  it 'saves the user name in the session' do
-    post '/login'
-    session[:name].should == 'name from authenticator'
-  end
-
   it 'saves the ein in the session' do
     post '/login'
     session[:ein].should == 'ein from authenticator'
   end
 
-  it 'saves the user role in the session' do
+  it 'redirects to the my account page' do
     post '/login'
-    session[:role].should == 'role from authenticator'
-  end
-
-  it 'redirects to the home page' do
-    post '/login'
-    expect(last_response).to redirect_to('/')
+    expect(last_response).to redirect_to('/my_account')
   end
 end
 
@@ -81,7 +71,7 @@ end
 describe 'GET /logout' do
 
   it 'clears the session' do
-    get '/logout', {}, 'rack.session' => { name: 'fred' }
+    get '/logout', {}, 'rack.session' => { ein: 'fred' }
     session.should be_empty
   end
 
