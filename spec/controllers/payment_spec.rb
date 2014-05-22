@@ -14,6 +14,7 @@ describe "/payments" do
     fred.stub(:owes) { 4 }
 
     Member.stub(:all).and_return([bob, fred])
+    Member.stub(:find_for_session).and_return(double(:dummy_member, name: 'An Admin', role: 'Admin'))
 
     get_as_admin '/payments'
 

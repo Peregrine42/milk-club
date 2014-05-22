@@ -118,4 +118,13 @@ describe Member, '.new_from_session' do
     user = Member.new_from_session(:role => "A role")
     user.role.should == "A role"
   end
+
+end
+
+describe Member, 'find_for_session' do
+  it 'finds the user in the database' do
+    target = Member.create(name: 'a member', ein: '6', role: 'User')
+    Member.create(name: 'b member', ein: '7', role: 'User')
+    expect(Member.find_for_session('6')).to eq target
+  end
 end

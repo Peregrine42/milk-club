@@ -1,7 +1,7 @@
 module AuthenticationHelper
 
   def current_user
-    @current_user ||= Member.new_from_session(session)
+    @current_user ||= Member.find_for_session(session[:ein])
   end
 
   def current_user_logged_in?

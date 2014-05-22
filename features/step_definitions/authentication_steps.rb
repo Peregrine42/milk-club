@@ -13,7 +13,7 @@ end
 
 When "I log in with valid iuser credentials" do
 
-  Member.create(:ein => 'good ein', :role => 'Admin')
+  Member.create(:ein => 'good ein', :role => 'Admin', :name => 'Valid User')
   crowd_double.stub_login(:uin        => 'good ein',
                           :password   => 'good password',
                           :first_name => 'Valid',

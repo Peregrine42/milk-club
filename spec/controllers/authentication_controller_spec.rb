@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-  def session
-    last_request.env['rack.session']
-  end
+def session
+  last_request.env['rack.session']
+end
 
 describe 'GET /login' do
   it 'renders the login page' do
@@ -13,7 +13,8 @@ end
 
 describe 'POST /login - successful login' do
   let(:user) { double(:user,  :name => 'name from authenticator',
-                              :role => 'role from authenticator' ) }
+                              :role => 'role from authenticator',
+                              :ein  =>  'ein from authenticator') }
 
   before do
     Authenticator.stub(:user_with_credentials).and_return(user)
@@ -29,6 +30,11 @@ describe 'POST /login - successful login' do
     session[:name].should == 'name from authenticator'
   end
 
+  it 'saves the ein in the session' do
+    post '/login'
+    session[:ein].should == 'ein from authenticator'
+  end
+
   it 'saves the user role in the session' do
     post '/login'
     session[:role].should == 'role from authenticator'
@@ -36,9 +42,7 @@ describe 'POST /login - successful login' do
 
   it 'redirects to the home page' do
     post '/login'
-    last_response.should be_a_redirect
-    follow_redirect!
-    last_response.body.should =~ /Members/
+    expect(last_response).to redirect_to('/')
   end
 end
 

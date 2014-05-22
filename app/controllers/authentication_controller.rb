@@ -15,6 +15,7 @@ class App < Sinatra::Base
       session.clear
       session[:name] = user.name
       session[:role] = user.role
+      session[:ein]  = user.ein
       redirect '/'
     rescue AuthenticationException
       flash.now[:error] = 'Your user details are invalid'

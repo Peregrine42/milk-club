@@ -27,6 +27,13 @@ class Member < ActiveRecord::Base
     user
   end
 
+  def self.find_for_session(ein)
+    member = Member.find_by(ein: ein)
+    raise ActiveRecord::RecordNotFound unless member
+
+    member
+  end
+
   def total_paid
     payments.inject(0) { |sum, p| sum += p.amount }
   end

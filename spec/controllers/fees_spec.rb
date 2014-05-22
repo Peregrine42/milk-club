@@ -6,11 +6,13 @@ describe "GET /fees" do
   end
 
   it "finds the current fee" do
+    Member.stub(:find_for_session).and_return(double(:dummy_member, name: 'An Admin', role: 'Admin'))
     Fee.should_receive(:most_recent)
     get_as_admin '/fees'
   end
 
   it "shows the fee change page" do
+    Member.stub(:find_for_session).and_return(double(:dummy_member, name: 'An Admin', role: 'Admin'))
     get_as_admin '/fees'
     expect(last_response.body).to match "The current membership fee is"
   end
@@ -24,6 +26,7 @@ describe "POST /fees" do
   end
 
   it "finds the current fee" do
+    Member.stub(:find_for_session).and_return(double(:dummy_member, name: 'An Admin', role: 'Admin'))
     Fee.should_receive(:most_recent)
     post_as_admin '/fees', { fee: "2" }
   end
@@ -36,18 +39,14 @@ describe "POST /fees" do
 
     it "sets the flash and redirects to the fee page" do
       post_as_admin '/fees', { fee: "2" }
-      follow_redirect!
-      expect(last_response.body).to match "The fee has been updated"
-      expect(last_response.body).to match "The current membership fee is"
+      expect(last_response).to redirect_to('/fees')
     end
   end
 
   context "the fee is the same" do
     it "sets the flash and redirects to the fee page" do
       post_as_admin '/fees', { fee: "1" }
-      follow_redirect!
-      expect(last_response.body).to match "The fee has not been changed"
-      expect(last_response.body).to match "The current membership fee is"
+      expect(last_response).to redirect_to('/fees')
     end
   end
 end
