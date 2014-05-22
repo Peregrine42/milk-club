@@ -1,0 +1,4 @@
+default:  --require features/support --require features/step_definitions
+rake:     --format <%= ENV["CUCUMBER_FORMAT"] || "progress" %>
+ok:       features --profile rake --strict --tags ~@wip --format html --out log/features_ok.html
+wip:      features --profile rake --tags @wip --wip --format html --out log/features_wip.html
