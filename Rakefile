@@ -1,15 +1,7 @@
 ENV['RACK_ENV'] ||= 'test'
 
-require 'cucumber/rake/task'
-require 'rspec/core/rake_task'
 require 'sinatra/activerecord/rake'
-require './app'
 
-Cucumber::Rake::Task.new(:features) do |t|
-end
+Dir["#{File.dirname(__FILE__)}/lib/tasks/**/*.rake"].sort.each { |r| load r }
 
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.rspec_opts = "--color -d"
-end
-
-task :default => [:spec, :features]
+require_relative './app.rb'
