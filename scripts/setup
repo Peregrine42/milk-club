@@ -1,0 +1,690 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+# ============================================
+             ruby_version=2.1.1
+     default_user_account=milk_club
+         default_app_name=milk_club
+              default_url=milky
+       default_thin_count=2
+   default_thin_port_start=8000
+   default_maximum_memory=100
+default_monit_alert_email=cloud.development.team@bt.com
+ default_log_days_to_keep=7
+# ============================================
+
+                      new_install=1
+              saved_settings_path=/etc/webapps
+generate_self_signed_certificates=0
+
+ask() {
+  printf "\r  [ \033[0;33m?\033[0m ] $1 "
+}
+
+success() {
+  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+}
+
+if (( EUID )); then
+  echo "This script must be run as root" 1>&2
+  exit 1
+fi
+
+# ========
+# settings
+# ========
+mkdir -p ${saved_settings_path}
+chmod 777 ${saved_settings_path}
+
+settings_files=$(ls ${saved_settings_path})
+
+if [[ ! -z "${settings_files}" ]]; then
+  echo -e "\nSaved settings from previous script runs found.  Enter the relevant"
+  echo -e "number to use.  Enter anything else to use the script standard defualts\n"
+
+  PS3="Your choice: "
+
+  select file_name in ${settings_files}; do
+    break
+  done
+
+  if [[ ! -z "${file_name}" ]]; then
+    echo -e "\nUsing settings for: ${file_name}\n"
+
+    while read setting; do
+      setting_name="default_${setting%:*}"
+      setting_value=${setting#* }
+      eval ${setting_name}=$(echo -ne \""${setting_value}"\")
+    done < "${saved_settings_path}/${file_name}"
+  else
+    echo -e "\nUsing default settings.\n"
+  fi
+fi
+
+
+# ============
+# user prompts
+# ============
+ask " - Install under unix account                        [${default_user_account}]?"
+read -e user_account
+user_account=${user_account:-${default_user_account}}
+
+ask " - Install as app named (no underscores please)      [${default_app_name}]?"
+read -e app_name
+app_name=${app_name:-${default_app_name}}
+
+ask " - Site URL                                          [${default_url}]?"
+read -e url
+url=${url:-${default_url}}
+
+ask " - Number of thins                                   [${default_thin_count}]?"
+read -e thin_count
+thin_count=${thin_count:-${default_thin_count}}
+
+ask " - thin port start value                             [${default_thin_port_start}]?"
+read -e thin_port_start
+[[ -z ${thin_port_start} ]] && thin_port_start=${default_thin_port_start}
+thin_port_start=${thin_port_start:-${default_thin_port_start}}
+
+ask " - app instance max memory (MB)                      [${default_maximum_memory}]?"
+read -e maximum_memory
+[[ -z ${maximum_memory} ]] && maximum_memory=${default_maximum_memory}
+maximum_memory=${maximum_memory:-${default_maximum_memory}}
+
+ask " - send monit alert emails to                        [${default_monit_alert_email}]?"
+read -e monit_alert_email
+[[ -z ${monit_alert_email} ]] && monit_alert_email=${default_monit_alert_email}
+monit_alert_email=${monit_alert_email:-${default_monit_alert_email}}
+
+ask " - keep logs for this many days                      [${default_log_days_to_keep}]?"
+read -e log_days_to_keep
+[[ -z ${log_days_to_keep} ]] && log_days_to_keep=${default_log_days_to_keep}
+log_days_to_keep=${log_days_to_keep:-${default_log_days_to_keep}}
+
+mysql_root_password=
+if ! command -v mysql >/dev/null 2>&1; then
+  default_mysql_root_password=$(date +%s | sha256sum | base64 | head -c 10 ; echo)
+  ask " - MySQL root password                               [${default_mysql_root_password}]?"
+  read -e mysql_root_password
+  mysql_root_password=${mysql_root_password:-${default_mysql_root_password}}
+fi
+
+mysql_user_password=
+if [[ ! -e "/home/${user_account}/${app_name}/config/database.yml" ]]; then
+  default_mysql_user_password=$(date +%s | sha256sum | base64 | head -c 10 ; echo)
+  ask " - MySQL user password                               [${default_mysql_user_password}]?"
+  read -e mysql_user_password
+  mysql_user_password=${mysql_user_password:-${default_mysql_user_password}}
+fi
+
+if [[ ! -f /etc/nginx/ssl/${app_name}.key || ! -f /etc/nginx/ssl/${app_name}.crt ]]; then
+  ask " - No SSL certificates found, generate self signed?  [y/N]?"
+  read -e yes_or_no
+
+  if [[ ${yes_or_no} = "y" || ${yes_or_no} = "Y" ]]; then
+    generate_self_signed_certificates=1
+  fi
+fi
+
+if [[ -e /home/${user_account}/${app_name}/config/config.yml ]]; then
+  ask " - config.yml file already present. Regenerate?      [y/N]?"
+  read -e yes_or_no
+
+  if [[ ${yes_or_no} = "y" || ${yes_or_no} = "Y" ]]; then
+    rm -f /home/${user_account}/${app_name}/config/config.yml
+  fi
+fi
+
+echo ""
+
+
+# =============
+# save settings
+# =============
+> ${saved_settings_path}/${app_name}
+for setting in user_account app_name url thin_count thin_port_start maximum_memory monit_alert_email log_days_to_keep; do
+  echo "${setting}: ${!setting}" >> ${saved_settings_path}/${app_name}
+done
+
+edit_warning="# ***************** DO NOT EDIT THIS FILE ******************
+# auto-generated by:
+#
+# /home/${user_account}/${app_name}/scripts/setup
+#
+# To make changes: <update push> re-run
+# ***************** DO NOT EDIT THIS FILE ******************"
+
+
+# ================
+# install packages
+# ================
+success "Installing system packages (may take a while)..."
+apt-get update -q >/dev/null
+sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password ${mysql_root_password}"
+sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${mysql_root_password}"
+apt-get install -q -y curl git-core libmysqlclient-dev libxml2-dev libyaml-dev monit mysql-server nginx ruby1.9.3 screen tmux vim wget >/dev/null
+success "System packages installed"
+
+
+# ================
+# secure-ize mysql
+# ================
+if [[ -d /var/lib/mysql/test ]]; then
+  Q1="DELETE FROM mysql.user WHERE User='';"
+  Q2="DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
+  Q3="DROP DATABASE IF EXISTS test;"
+  Q4="DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
+  Q5="FLUSH PRIVILEGES;"
+  SQL="${Q1}${Q2}${Q3}${Q4}${Q5}"
+  if [[ -z ${mysql_root_password} ]]; then
+    ask " - need MySQL root password to secure the mysql installation: "
+    read -e mysql_root_password
+  fi
+  mysql -uroot -p${mysql_root_password} -e "$SQL"
+  success "MySql installation secured"
+fi
+
+
+# ===========
+# install rvm
+# ===========
+if [[ ! -f /etc/profile.d/rvm.sh ]]; then
+  success "Installing rvm..."
+  curl -L get.rvm.io | bash -s stable >/dev/null
+  sudo bash -c "source /etc/profile.d/rvm.sh && rvm install ${ruby_version} --default"
+fi
+success "RVM installed"
+
+echo ""
+
+# ==================
+# user account setup
+# ==================
+[[ ! -d /home/${user_account} ]] && useradd -s /bin/bash -d /home/${user_account} -m -G rvm ${user_account}
+
+sudo -u ${user_account} /bin/bash - <<EOF
+  export HOME=/home/${user_account}
+  cd \$HOME
+  yes | bash <(curl -ksSL https://gitlab.nat.bt.com/nimboids/innkeepers/raw/master/scripts/bootstrap) >/dev/null
+EOF
+
+if grep -q -v "${user_account}" /etc/sudoers; then
+  echo "${user_account} ALL=NOPASSWD: /etc/init.d/${app_name}" >> /etc/sudoers
+fi
+success "Unix account configured:       $user_account"
+success "Public keys for innkeepers in: /home/$user_account/.ssh/authorized_keys"
+
+# =======
+# project
+# =======
+[[ -d /home/${user_account}/${app_name}/.git ]] && new_install=0
+
+sudo -u ${user_account} /bin/bash - <<EOF
+
+  mkdir -p /home/${user_account}/${app_name}/config
+  mkdir -p /home/${user_account}/${app_name}/log
+  mkdir -p /home/${user_account}/${app_name}/tmp/pids
+
+  cd /home/${user_account}/${app_name}
+
+  [[ ! -d .git ]] && git init >/dev/null
+
+  if ! git config --get receive.denynonfastforwards | grep -Fq false; then
+    git config receive.denyNonFastForwards false
+  fi
+
+  if ! git config --get receive.denyCurrentBranch | grep -Fq ignore; then
+    git config receive.denyCurrentBranch ignore
+  fi
+EOF
+
+if [[ ! -e /home/${user_account}/${app_name}/config/database.yml ]]; then
+  cat <<EOF > /home/${user_account}/${app_name}/config/database.yml
+
+${edit_warning}
+
+production:
+  adapter:  mysql2
+  database: ${app_name}
+  username: ${user_account}
+  password: ${mysql_user_password}
+EOF
+fi
+
+success "Database config:               /home/${user_account}/${app_name}/config/database.yml"
+
+if [[ ! -e /home/${user_account}/${app_name}/config/config.yml ]]; then
+  crowd_application_name=
+  crowd_application_password=
+
+  ask " - enter Crowd application name for config.yml: "
+  read -e crowd_application_name
+
+  ask " - enter Crowd application password for config.yml: "
+  read -e crowd_application_password
+
+  cat <<EOF > /home/${user_account}/${app_name}/config/config.yml
+
+${edit_warning}
+
+production:
+  crowd_details:
+    application_name:     '${crowd_application_name}'
+    application_password: '${crowd_application_password}'
+    crowd_uri:            'https://collaborate.bt.com/crowd/services/SecurityServer'
+EOF
+  success "Application config:            /home/${user_account}/${app_name}/config/config.yml"
+fi
+
+cat <<EOF > /home/${user_account}/${app_name}/.git/hooks/post-receive
+#!/usr/bin/env ruby
+
+${edit_warning}
+
+if ENV['GIT_DIR'] == '.'
+  # this means the script has been called as a hook, not manually.
+  # get the proper GIT_DIR so we can descend into the working copy dir;
+  # if we don't then \`git reset --hard\` doesn't affect the working tree.
+  Dir.chdir('..')
+  ENV['GIT_DIR'] = '.git'
+end
+
+cmd = %(bash -c "[ -f /etc/profile ] && source /etc/profile; echo \$PATH")
+envpath = IO.popen(cmd, 'r') { |io| io.read.chomp }
+ENV['PATH'] = envpath
+
+# find out the current branch
+head = \`git symbolic-ref HEAD\`.chomp
+# abort if we're on a detached head
+exit unless \$?.success?
+
+oldrev = newrev = nil
+null_ref = '0' * 40
+
+# read the STDIN to detect if this push changed the current branch
+while newrev.nil? and gets
+  # each line of input is in form of "<oldrev> <newrev> <refname>"
+  revs = \$_.split
+  oldrev, newrev = revs if head == revs.pop
+end
+
+# abort if there's no update, or in case the branch is deleted
+exit if newrev.nil? or newrev == null_ref
+
+# update the working copy
+\`umask 002 && git reset --hard\`
+
+logfile = 'log/deploy.log'
+
+# log timestamp
+File.open(logfile, 'a') { |log| log.puts "==== #{Time.now} ====" }
+
+# start the post-reset hook in background
+system %(nohup scripts/post-reset #{oldrev} #{newrev} 1>>#{logfile} 2>>#{logfile} &)
+EOF
+chown ${user_account}:${user_account} /home/${user_account}/${app_name}/.git/hooks/post-receive
+chmod +x /home/${user_account}/${app_name}/.git/hooks/post-receive
+
+success "Application directory:         /home/${user_account}/${app_name}"
+
+
+# ==============
+# mysql database
+# ==============
+mysql_user_password=$(grep password /home/${user_account}/${app_name}/config/database.yml | cut -f4 -d' ')
+if [[ ! -d /var/lib/mysql/${app_name/-/@002d} ]]; then
+  Q1="CREATE DATABASE IF NOT EXISTS \`${app_name}\`;"
+  Q2="GRANT ALL ON *.* TO '${user_account}'@'localhost' IDENTIFIED BY '${mysql_user_password}';"
+  Q3="FLUSH PRIVILEGES;"
+  SQL="${Q1}${Q2}${Q3}"
+  if [[ -z ${mysql_root_password} ]]; then
+    ask " - need MySQL root password to create the ${app_name} database: "
+    read -e mysql_root_password
+  fi
+  mysql -uroot -p${mysql_root_password} -e "$SQL"
+  success "Database configured"
+fi
+
+
+# ==================
+# thin configuration
+# ==================
+cat <<EOF > /home/${user_account}/${app_name}_thin_config.yml
+${edit_warning}
+
+environment:          production
+chdir:                /home/${user_account}/${app_name}
+address:              127.0.0.1
+user:                 ${user_account}
+group:                ${user_account}
+port:                 ${thin_port_start}
+servers:              ${thin_count}
+pid:                  /home/${user_account}/${app_name}/tmp/pids/thin.pid
+rackup:               /home/${user_account}/${app_name}/config.ru
+log:                  /home/${user_account}/${app_name}/log/thin.log
+max_conns:            1024
+timeout:              30
+max_persistent_conns: 512
+daemonize:            true
+onebyone:             true
+EOF
+chown ${user_account}:${user_account} /home/${user_account}/${app_name}_thin_config.yml
+success "Thin configuration:            /home/${user_account}/${app_name}_thin_config.yml"
+
+
+# ================
+# ssl certificates
+# ================
+mkdir -p /etc/nginx/ssl
+sudo chown -R root:root /etc/nginx/ssl
+sudo chmod -R 600 /etc/nginx/ssl
+
+if (( ${generate_self_signed_certificates} )); then
+  # private key
+  sudo openssl genrsa -out /etc/nginx/ssl/${app_name}.key 4096 >/dev/null
+
+  # certificate signing request
+  subject="
+C=UK
+ST=Suffolk
+O=BT
+localityName=Ipswish
+commonName=${url}
+organizationalUnitName=Innkeepers
+emailAddress=cloud.development.team@bt.com
+"
+  openssl req -new -batch -subj "$(echo -n "$subject" | tr "\n" "/")" -key /etc/nginx/ssl/${app_name}.key -out /etc/nginx/ssl/${app_name}.csr >/dev/null
+
+  # certificate - valid for 10 years
+  openssl x509 -req -days 3650 -in /etc/nginx/ssl/${app_name}.csr -signkey /etc/nginx/ssl/${app_name}.key -out /etc/nginx/ssl/${app_name}.crt >/dev/null
+fi
+
+if [[ ! -f /etc/nginx/ssl/${app_name}.key || ! -f /etc/nginx/ssl/${app_name}.crt ]]; then
+  echo -e "\nNginx requires an SSL certificate and key file to be installed."
+  echo    "Please install them before contunuing:"
+  echo -e "\n  * private key: /etc/nginx/ssl/${app_name}.key"
+  echo      "  * certificate: /etc/nginx/ssl/${app_name}.crt"
+  echo -e "\nPress any key once these have been installed."
+  read -n1
+fi
+
+success "SSL certificate location:      /usr/ssl"
+
+
+# ===================
+# nginx configuration
+# ===================
+if [[ -e /etc/nginx/sites-available/default ]]; then
+  rm -f /etc/nginx/sites-available/default
+fi
+
+cat <<EOF > /etc/nginx/nginx.conf
+${edit_warning}
+
+user                www-data;
+worker_processes    1;
+
+pid                 /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include             /etc/nginx/mime.types;
+
+    # set a default type for the rare situation that
+    # nothing matches from the mimie-type include
+    default_type        application/octet-stream;
+
+    # configure log format
+    log_format main     '\$remote_addr - \$remote_user [\$time_local] '
+                        '"\$request" \$status  \$body_bytes_sent "\$http_referer" '
+                        '"\$http_user_agent" "\$http_x_forwarded_for"';
+
+    access_log          /var/log/nginx/access.log main;
+
+    error_log           /var/log/nginx/error.log;
+
+    sendfile            on;
+
+    keepalive_timeout   2;
+
+    # These are good default values.
+    tcp_nopush          on;
+    tcp_nodelay         off;
+
+    # output compression saves bandwidth
+    gzip                on;
+    gzip_buffers        4 8k;
+    gzip_comp_level     2;
+    gzip_http_version   1.0;
+    gzip_min_length     1100;
+    gzip_proxied        any;
+    gzip_types          text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+    gzip_disable        "MSIE [1-6]\.(?!.*SV1)";
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+EOF
+
+cat << EOF > /etc/nginx/sites-available/${app_name}
+${edit_warning}
+
+upstream ${app_name} {
+EOF
+
+for (( i=0; i < ${thin_count}; i++ )); do
+  echo "  server 127.0.0.1:$((thin_port_start + i));" >> /etc/nginx/sites-available/${app_name}
+done
+
+cat << EOF >> /etc/nginx/sites-available/${app_name}
+}
+
+server {
+  listen        80;
+  server_name   ${url};
+  return        301 https://\$host\$request_uri;
+}
+
+server {
+  listen                443;
+  ssl                   on;
+  server_name           ${url};
+
+  root                  /home/${user_account}/${app_name}/public;
+
+  access_log            /home/${user_account}/${app_name}/log/nginx.log main;
+  error_log             /home/${user_account}/${app_name}/log/error.log;
+
+  ssl_certificate       /etc/nginx/ssl/${app_name}.crt;
+  ssl_certificate_key   /etc/nginx/ssl/${app_name}.key;
+
+  # server images and js directly from the web server
+  location ~ /(img/js)/ {
+    break;
+  }
+
+  location / {
+
+    # needed to forward user's IP address
+    proxy_set_header          X-Real-IP  \$remote_addr;
+
+    # If the file exists as a static file serve it directly
+    if (-f \$request_filename) {
+      break;
+    }
+
+    # if we have a maintenance page then show this
+    if (-f /home/${user_account}/${app_name}/public/maintenance.html) {
+      rewrite ^(.*)$ /maintenance.html break;
+    }
+
+    if (!-f \$request_filename) {
+      proxy_pass  http://${app_name};
+      break;
+    }
+  }
+}
+EOF
+
+if [[ ! -f /etc/nginx/sites-enabled/${app_name} ]]; then
+  ln -s /etc/nginx/sites-available/${app_name} /etc/nginx/sites-enabled/${app_name}
+fi
+
+if /etc/init.d/nginx status | grep "nginx is running" > /dev/null; then
+  /etc/init.d/nginx reload >/dev/null
+else
+  /etc/init.d/nginx start >/dev/null
+fi
+
+success "Nginx configuration:           /etc/nginx/sites-available/${app_name}"
+
+# ===========
+# init script
+# ===========
+cat <<EOF > /etc/init.d/${app_name}
+#!/bin/bash
+${edit_warning}
+
+### BEGIN INIT INFO
+# Provides:          ${app_name}
+# Required-Start:    \$local_fs \$remote_fs \$syslog \$network
+# Required-Stop:     \$local_fs \$remote_fs \$syslog \$network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the ${app_name} web application
+# Description:       starts ${app_name} using start-stop-daemon
+### END INIT INFO
+
+USER=${user_account}
+CONTROL_WEB_APP="cd /home/${user_account}/${app_name}; . .rvmrc; bundle exec thin -R config.ru -C /home/${user_account}/${app_name}_thin_config.yml"
+
+. /lib/lsb/init-functions
+
+case "\$1" in
+  start)
+    echo "Starting ${app_name} thin"
+    su - \$USER -c "\$CONTROL_WEB_APP start"
+    ;;
+  stop)
+    echo "Stopping ${app_name} thin"
+    su - \$USER -c "\$CONTROL_WEB_APP stop"
+    ;;
+  restart)
+    echo "Restarting ${app_name} thin"
+    su - \$USER -c "\$CONTROL_WEB_APP restart"
+    ;;
+  *)
+    echo "Usage: \$0 start|stop|restart" >&2
+    exit 3
+    ;;
+esac
+EOF
+chmod u+x /etc/init.d/${app_name}
+
+if ! ls /etc/rc3.d | egrep "^S[0123456789]+${app_name}$" >/dev/null; then
+  update-rc.d ${app_name} defaults >/dev/null
+fi
+success "Init script:                   /etc/init.d/${app_name}"
+
+
+# =====
+# monit
+# =====
+cat <<EOF > /etc/monit/monitrc
+${edit_warning}
+
+set daemon          120
+set logfile         /var/log/monit.log
+set idfile          /var/lib/monit/id
+set statefile       /var/lib/monit/state
+set eventqueue
+  basedir           /var/lib/monit/events
+  slots 100
+
+set mailserver      smtp.intra.bt.com
+set mail-format     {    from: monit@${url} }
+set mail-format     { subject: ${app_name} monit alert -- \$EVENT \$SERVICE }
+set alert           ${monit_alert_email} only on { timeout }
+
+set httpd port 2812 and
+  use address localhost  # only accept connections from localhost
+  allow localhost        # allow localhost to connect to the server and
+  allow admin:monit      # require user 'admin' with password 'monit'
+  allow @monit           # allow users of group 'monit' to connect (rw)
+  allow @users readonly  # allow users of group 'users' to connect readonly
+
+include /etc/monit/conf.d/*
+EOF
+
+cat <<EOF > /etc/monit/conf.d/${app_name}
+${edit_warning}
+EOF
+
+for (( i=0; i < ${thin_count}; i++ )); do
+  cat <<EOF >> /etc/monit/conf.d/${app_name}
+check process ${app_name}_$((thin_port_start + i))
+  with pidfile /home/${user_account}/${app_name}/tmp/pids/thin.$((thin_port_start + i)).pid
+  start program = "/etc/init.d/${app_name} start"
+  stop program  = "/etc/init.d/${app_name} stop"
+  if failed host 127.0.0.1 port $((thin_port_start + i)) protocol HTTP request "/" then restart
+  if totalmem > ${maximum_memory} MB for 5 cycles then restart
+  if cpu usage > 95% for 3 cycles then restart
+  if 5 restarts within 5 cycles then timeout
+EOF
+done
+success "Monit config:                  /etc/monit/conf.d/${app_name}"
+
+
+# =========
+# logrotate
+# =========
+cat <<EOF > /etc/logrotate.d/${app_name}
+${edit_warning}
+
+/home/${user_account}/${app_name}/log/*.log {
+    daily
+    missingok
+    rotate ${log_days_to_keep}
+    compress
+    delaycompress
+    notifempty
+    copytruncate
+    dateext
+}
+EOF
+success "Logrotate config:              /etc/logrotate.d/${app_name}"
+
+
+echo ""
+success "Setup complete"
+
+if (( ${new_install} )); then
+  echo -e "\nNew Deplyments
+==============
+As this is a new deployment you now need to create a remote in the git
+repository you with to push from, such as a build server or a git
+repository on your local machine, e.g. (assumes remote name is
+'production' but it can be anything you like):
+
+On machine you wish to push from:
+  > git remote add production "${user_account}@${url}:${app_name}"
+  > git push production master
+
+After pushing, then (on this server):
+  * start nginx (or if it already running reload it)
+  * then:
+    > su - ${user_account}
+    > cd ${app_name}
+    > git reset --hard
+    > . .rvmrc
+
+    > # ...ensure application config files are set up
+
+    > bundle install --local --without test development
+    > sudo /etc/init.d/${app_name} start\n"
+fi
