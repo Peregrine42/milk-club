@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Member do
 
-  let(:member) { Member.create(ein: '1234', role: 'User') }
+  let(:member) { Member.create(name: 'blah', ein: '1234', role: 'User') }
 
   it "can say how much has been paid in total by the member" do
     member.payments.create(amount: 5)
@@ -42,7 +42,7 @@ describe Member do
 end
 
 describe Member, "#class_for_balance" do
-  let(:member) { Member.create(ein: '1234', role: 'User') }
+  let(:member) { Member.create(name: 'blah', ein: '1234', role: 'User') }
 
   it "returns 'success' if the balance is positive" do
     member.payments.create(amount: 2)
@@ -66,18 +66,18 @@ describe "validations" do
   end
 
   it "does not allow empty eins" do
-    lambda { Member.create!(ein: "", role: "Admin")}.should raise_error(ActiveRecord::RecordInvalid)
+    lambda { Member.create!(name: 'blah', ein: "", role: "Admin")}.should raise_error(ActiveRecord::RecordInvalid)
   end
 
   it "does not allow duplicate eins" do
-    Member.create!(ein: "123", role: "Admin")
-    lambda { Member.create!(ein: "123", role: "Admin")}.should raise_error(ActiveRecord::RecordInvalid)
+    Member.create!(name: 'blah', ein: "123", role: "Admin")
+    lambda { Member.create!(name: 'blah', ein: "123", role: "Admin")}.should raise_error(ActiveRecord::RecordInvalid)
   end
 
   it "only allows Admin or User" do
-    lambda { Member.create!(ein: "234", role: "Minion") }.should raise_error(ActiveRecord::RecordInvalid)
-    Member.create!(ein: "234", role: "Admin").should be_true
-    Member.create!(ein: "345", role: "User").should be_true
+    lambda { Member.create!(name: 'blah', ein: "234", role: "Minion") }.should raise_error(ActiveRecord::RecordInvalid)
+    Member.create!(name: 'blah', ein: "234", role: "Admin").should be_true
+    Member.create!(name: 'blah', ein: "345", role: "User").should be_true
   end
 end
 
@@ -97,7 +97,7 @@ end
 
 describe Member, '.new_for_authenticator' do
   it 'returns a user whose name is set by the attributes' do
-    Member.create(ein: '1234', role: 'User')
+    Member.create(name: 'blah', ein: '1234', role: 'User')
     user = Member.new_for_authenticator(:ein => '1234', :name => 'a name')
     user.name.should == 'a name'
   end
