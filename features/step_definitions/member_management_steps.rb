@@ -1,5 +1,5 @@
 When "I visit the new member page" do
-  visit "/member/new" 
+  visit "/member/new"
 end
 
 When "I fill in the new member details" do
@@ -28,5 +28,8 @@ When "I change some details" do
 end
 
 Then "the details in the database will change" do
-
+  member = Member.find(1)
+  expect(member.name).to eq "Some Person"
+  expect(member.ein).to eq "12345678"
+  expect(member.role).to eq "User"
 end

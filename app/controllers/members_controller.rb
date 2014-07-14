@@ -25,4 +25,24 @@ class App < Sinatra::Base
     end
   end
 
+  get '/member/edit/:id' do
+    @member = Member.find(params["id"])
+    erb :'member/edit'
+  end
+
+  post '/member/edit/:id' do
+    @member = Member.find(params["id"])
+    if @member.update(params["member"])
+      flash[:success] = "Member updated successfully"
+      redirect "/member/edit/#{params["id"]}"
+    else
+      error_string = "Member not updated"
+      error_string += "<p>"
+      error_string += @member.errors.full_messages.join("</p><p>")
+      error_string += "</p>"
+      flash[:error] = error_string
+      redirect "/member/edit/#{params["id"]}"
+    end
+  end
+
 end

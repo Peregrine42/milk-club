@@ -55,3 +55,32 @@ describe 'POST /member/new' do
   end
 
 end
+
+describe 'GET /member/edit/:id' do
+  it "shows the edit page for a member" do
+    Member.stub(:find_for_session).and_return(double(:dummy_member, name: 'An Admin', role: 'Admin'))
+
+    member = double(:member, name: "Hello", ein: 123, id: 1, role: "Admin")
+    Member.stub(:find).with("1").and_return(member)
+    get_as_admin("member/edit/1")
+    expect(last_response.body).to match "Hello"
+  end
+end
+
+describe 'POST /member/edit/:id' do
+
+    it "updates members data" do
+      params = { "id"   => "1",
+                 "name" => "any name",
+                 "ein"  => "3",
+                 "role" => "Admin" }
+
+      Member.stub(:find_for_session).and_return(double(:dummy_member, name: 'An Admin', role: 'Admin'))
+
+      member = double(:member, :null_object => true)
+      Member.should_receive(:find).with(params["id"]).and_return(member)
+      member.should_receive(:update).and_return(true)
+
+      post_as_admin '/member/edit/1', params
+    end
+end
