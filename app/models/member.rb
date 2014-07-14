@@ -70,24 +70,4 @@ class Member < ActiveRecord::Base
     true
   end
 
-  #def logged_in?
-    #session[:ein] == ein
-  #end
-
-  #def admin?
-    #(role != "User")
-  #end
-
-  #def user_admin?
-    #(role == "Deity")
-  #end
-
-  #def initials
-    #initials = ""
-    #name.split.each do |part|
-      #initials.concat(part[0])
-    #end
-    #initials.upcase
-  #end
-
 end
