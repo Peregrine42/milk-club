@@ -4,7 +4,7 @@ end
 
 When "I change the fee to a new value" do
   fill_in "fee", with: 2
-  click_on "change fee"
+  click_on "Change fee"
 end
 
 Then "the new fee is confirmed" do

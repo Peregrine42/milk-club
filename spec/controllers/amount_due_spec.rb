@@ -6,7 +6,7 @@ describe "GET /new_amount_due" do
     Member.stub(:find_for_session).and_return(double(:dummy_member, name: 'An Admin', role: 'Admin'))
     get_as_admin '/new_amount_due'
 
-    expect(last_response.body).to match "add new amount due"
+    expect(last_response.body).to match "Add new amount due"
   end
 end
 

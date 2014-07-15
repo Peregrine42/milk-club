@@ -11,7 +11,7 @@ When "I visit the new amount due page" do
 end
 
 When "I click the add amount due button" do
-  click_button "add new amount due"
+  click_button "Add new amount due"
 end
 
 Then "everyone should owe at least the amount added" do
