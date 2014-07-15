@@ -10,3 +10,19 @@
     <th><%= @total_paid %></th>
   </tr>
 </table>
+
+<table class='table table-striped breakdown'>
+  <tr>
+    <th>User</th>
+    <th>Total Due</th>
+    <th>Total Balance</th>
+  </tr>
+
+  <% Member.all.each do |member| %>
+    <tr>
+      <td><%= member.name %></td>
+      <td><%= member.total_owed %></td>
+      <td><%= member.total_paid %></td>
+    </tr>
+  <% end %>
+</table>
