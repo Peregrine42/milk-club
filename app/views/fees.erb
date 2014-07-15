@@ -1,5 +1,9 @@
 <h2>Fees</h2>
 <form action="/fees" method="post">
-  The current membership fee is <input type="text" name="fee" value="<%= @fee %>">
-  <input type="submit" value="change fee">
+  The current membership fee is £<input type="text" name="fee" value="<%= @fee %>">
+
+  <div style = "padding-top:10px">
+    <input type="submit" value="Change fee">
+  </div>
+
 </form>
