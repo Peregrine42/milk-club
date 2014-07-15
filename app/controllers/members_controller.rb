@@ -1,7 +1,4 @@
 class App < Sinatra::Base
-
-  #member_only  '/members'
-
-  get '/members' do
+  get '/my_account' do
   end
 end
