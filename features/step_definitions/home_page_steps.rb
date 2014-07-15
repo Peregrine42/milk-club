@@ -3,12 +3,12 @@ Given "members, payments and dues are in the database" do
   joe     = Member.create(name: "Joe", ein:'6', role:'User')
   duncan  = Member.create(name: "Duncan", ein:'7', role:'User')
 
-  richard.dues.create(amount: 1)
-  joe.dues.create(amount: 1)
-  duncan.dues.create(amount: 1)
+  richard.dues.create(amount: 5)
+  joe.dues.create(amount: 10)
+  duncan.dues.create(amount: 15)
 
-  richard.payments.create(amount: 1)
-  joe.payments.create(amount: 1)
+  richard.payments.create(amount: 3)
+  joe.payments.create(amount: 6)
 end
 
 When "I visit the home page" do
