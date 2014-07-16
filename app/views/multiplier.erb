@@ -1,0 +1,13 @@
+<h2>Edit Multipliers</h2>
+
+<form action="/multiplier" method="post">
+  <table class = "table table-striped">
+    <% Member.all.each do |member| %>
+      <tr>
+        <td><%= member.name %></td>
+        <td><input type="text" class="<%= member.name.downcase + "_multiplier"%>" name="<%= member.name.downcase + "_multiplier"%>" value="<%= member.get_multiplier %>"></td>
+        <td><input type="submit" value="Change <%= member.name %>'s multiplier"></td>
+      </tr>
+    <% end %>
+  </table>
+</form>
