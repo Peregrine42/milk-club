@@ -12,6 +12,7 @@ class App < Sinatra::Base
         member.multiplier = params[parameter_key_string]
       end
       member.save
+      flash[:success] = "The multiplier has been updated"
     end
 
     redirect '/multiplier'
