@@ -1,13 +1,8 @@
-Given "my payment history is in the database" do
-  me = Member.find_by(ein: 'good ein')
-  me.payments.create(amount: 5)
-  me.dues.create(amount: 2)
+When "I click the my account navbar link" do
+  click_on("My Account")
 end
 
-When "I visit the my account page" do
-  visit '/my_account'
-end
-
-Then "I should see my payment history" do
-  expect(page.body).to match("Balance: £3")
+Then "I see my name, amount due, amount paid and balance" do
+  page.should have_content("User User")
+  page.should have_content("good ein")
 end

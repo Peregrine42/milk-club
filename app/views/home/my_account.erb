@@ -1,1 +1,19 @@
-<p>Balance: £<%= current_user.balance %> </p>
+<h2>My Account</h2>
+<h4><%= current_user.name && current_user.ein ? current_user.name + " - " + current_user.ein : "User Name r Ein Missing"%></h4>
+<table class='table table-striped'>
+  <tr>
+    <!--     <th>EIN</th> -->
+    <th>Role</th>
+    <th>Amount Due</th>
+    <th>Amount Paid</th>
+    <th>Balance</th>
+  </tr>
+
+  <tr>
+    <!--    <td><%= current_user.ein %></td> -->
+    <td><%= current_user.role %></td>
+    <td><%= current_user.total_owed %></td>
+    <td><%= current_user.total_paid %></td>
+    <td><%= current_user.balance %></td>
+  </tr>
+</table>

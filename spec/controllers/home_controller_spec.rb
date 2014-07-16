@@ -27,7 +27,7 @@ describe "GET /my_account" do
 
       get_as_user '/my_account'
       expect(last_response.body).to match("A User")
-      expect(last_response.body).to match("Balance: £1")
+      expect(last_response.body).to match("1")
     end
   end
 end
