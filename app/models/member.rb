@@ -70,4 +70,8 @@ class Member < ActiveRecord::Base
     true
   end
 
+  def get_multiplier
+    return multiplier
+  end
+
 end

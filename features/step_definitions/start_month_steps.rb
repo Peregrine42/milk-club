@@ -1,5 +1,5 @@
 Given "the system's database is populated" do
-  Fee.create(amount: 1)
+  Fee.create(amount: 5)
 
   Member.create(name: "Richard", ein:'5', role:'Admin')
   Member.create(name: "Joe", ein:'6', role:'User')

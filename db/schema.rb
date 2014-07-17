@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140520090944) do
+ActiveRecord::Schema.define(version: 20140716141006) do
 
   create_table "dues", force: true do |t|
     t.integer  "member_id"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20140520090944) do
     t.string "name"
     t.string "ein"
     t.string "role"
+    t.float  "multiplier", default: 1.0
   end
 
   create_table "payments", force: true do |t|
