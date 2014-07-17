@@ -1,0 +1,16 @@
+<h2>Members</h2>
+<table class='table table-striped'>
+  <tr>
+    <th>Name</th>
+    <th>Edit</th>
+    <td>Delete</td>
+  </tr>
+
+  <% Member.all.each do |member| %>
+    <tr>
+      <td><%= member.name %> </td>
+      <td><a href="members/edit/<%= member.id %>">Edit</a></td>
+      <td><a href="members/delete/<%= member.id %>">Delete</a></td>
+    </tr>
+  <% end %>
+</table>

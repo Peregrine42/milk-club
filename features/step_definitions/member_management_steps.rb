@@ -20,7 +20,6 @@ When "I visit the edit page for a member" do
 end
 
 When "I change some details" do
-
   fill_in "name", with: "Some Person"
   fill_in "ein",  with: "12345678"
   select "User",  from: "role"
