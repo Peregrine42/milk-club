@@ -1,4 +1,5 @@
 <h2>Members</h2>
+
 <table class='table table-striped'>
   <tr>
     <th>Name</th>
@@ -9,8 +10,12 @@
   <% Member.all.each do |member| %>
     <tr>
       <td><%= member.name %> </td>
-      <td><a href="members/edit/<%= member.id %>">Edit</a></td>
-      <td><a href="members/delete/<%= member.id %>">Delete</a></td>
+      <td><a class="btn btn-success" href="members/edit/<%= member.id %>">Edit</a></td>
+      <td><a class="btn btn-danger" href="members/delete/<%= member.id %>">Delete</a></td>
     </tr>
   <% end %>
 </table>
+
+<form action="/members/new" method="get">
+  <input class="btn btn-success" type="submit" value="Add new user">
+</form>

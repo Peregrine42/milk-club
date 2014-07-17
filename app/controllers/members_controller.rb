@@ -47,9 +47,13 @@ class App < Sinatra::Base
   end
 
   get '/members/delete/:id' do
-    member = Member.find_by(id: params[:id].to_i)
-    member.destroy!
-    flash[:success] = "Member deleted successfully"
-    redirect '/members/members'
+    if current_user.id == params[:id].to_i
+      flash[:error] = "You cannot delete yourself"
+    else
+      member = Member.find_by(id: params[:id].to_i)
+      member.destroy!
+      flash[:success] = "Member deleted successfully"
+    end
+    redirect '/members'
   end
 end
