@@ -15,7 +15,7 @@ class App < Sinatra::Base
 
     if new_member.save
       flash[:success] = "Member created successfully"
-      redirect '/members/new'
+      redirect '/members'
     else
       error_string = "Invalid member"
       error_string += "<p>"
@@ -35,7 +35,7 @@ class App < Sinatra::Base
     @member = Member.find(params["id"])
     if @member.update(params["member"])
       flash[:success] = "Member updated successfully"
-      redirect "/members/edit/#{params["id"]}"
+      redirect "/members"
     else
       error_string = "Member not updated"
       error_string += "<p>"
