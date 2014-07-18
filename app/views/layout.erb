@@ -14,7 +14,7 @@
 
   <body>
     <nav class="navbar navbar-inverse" role="navigation">
-    <div class="container-desktop" id="navigation">
+    <div class="container" id="navigation">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -31,8 +31,8 @@
         <ul class="nav navbar-nav">
           <% if current_user_logged_in? %>
             <% if current_user.role == "Admin" %>
-              <li ><a href='/my_account'>My Account</a></li>
-              <li ><a href='/payments'>New Payments</a></li>
+              <li ><a href='/my_account'>Account</a></li>
+              <li ><a href='/payments'>Payments</a></li>
               <li ><a href='/new_amount_due'>New Month</a></li>
               <li ><a href='/fees'>Manage Fees</a></li>
               <li ><a href='/multiplier'>Manage Multipliers</a></li>
