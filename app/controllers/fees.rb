@@ -6,7 +6,7 @@ class App < Sinatra::Base
   end
 
   post '/fees' do
-    if params[:fee].to_f != Fee.most_recent
+    if params[:fee].to_f != Fee.most_recent and params[:fee].to_f > 0
       Fee.create(amount: params[:fee].to_f)
       flash[:success] = "The fee has been updated"
     else
