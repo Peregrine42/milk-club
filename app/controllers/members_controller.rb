@@ -28,6 +28,15 @@ class App < Sinatra::Base
 
   get '/members/edit/:id' do
     @member = Member.find(params["id"])
+    if current_user.role != "Admin" or @member.id == current_user.id
+      if current_user.role == "Admin"
+        flash[:error] = "You cannot edit yourself"
+        redirect '/members'
+      elsif current_user.role == "User"
+        flash[:error] = "You cannot edit yourself or others"
+        redirect '/members'
+      end
+    end
     erb :'members/edit'
   end
 
