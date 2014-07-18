@@ -10,12 +10,12 @@
   <% Member.all.each do |member| %>
     <tr>
       <td><%= member.name %> </td>
-      <td><a class="btn btn-success" href="members/edit/<%= member.id %>">Edit</a></td>
+      <td><a class="btn btn-info" href="members/edit/<%= member.id %>">Edit</a></td>
       <td><a class="btn btn-danger" href="members/delete/<%= member.id %>">Delete</a></td>
     </tr>
   <% end %>
 </table>
 
 <form action="/members/new" method="get">
-  <input class="btn btn-success" type="submit" value="Add new user">
+  <input class="btn btn-info" type="submit" value="Add new user">
 </form>
