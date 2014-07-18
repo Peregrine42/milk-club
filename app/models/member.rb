@@ -2,6 +2,7 @@ class Member < ActiveRecord::Base
   has_many :payments
   has_many :dues
 
+  validates :name,  presence:   true
   validates :ein,   presence:   true,
                     uniqueness: true
   validates :role,  inclusion: {in: %w(Admin User)}

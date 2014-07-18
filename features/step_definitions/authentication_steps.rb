@@ -48,7 +48,7 @@ When 'I attempt to log in with valid credentials but the user is not in the data
 end
 
 When 'I log in as an admin' do
-  Member.create(:ein => 'good ein', :role => 'Admin')
+  Member.create(name: 'blah', :ein => 'good ein', :role => 'Admin')
 
   crowd_double.stub_login(:uin        => 'good ein',
                           :password   => 'good password',

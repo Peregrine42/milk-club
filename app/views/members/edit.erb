@@ -1,0 +1,30 @@
+<h2>Edit Member</h2>
+<form action="/members/edit/<%= @member.id %>" method="post" class="form-horizontal">
+  <div class = "form-group">
+    <label for="name" class='col-sm-2 control-label'>Name</label>
+    <div class="col-sm-3">
+      <input type="text" name="member[name]" id="name" value="<%= @member.name %>">
+    </div>
+  </div>
+
+  <div class = "form-group">
+    <label for="ein" class='col-sm-2 control-label'>EIN</label>
+    <div class="col-sm-3">
+      <input type="text" name="member[ein]" id="ein" value="<%= @member.ein %>">
+    </div>
+  </div>
+
+  <div class = "form-group">
+    <label for="role" class='col-sm-2 control-label'>Role</label>
+    <div class="col-sm-3">
+      <select id="role" name="member[role]">
+        <option value="Admin" selected="<%= @member.role == 'Admin' ? "selected" : "" %>">Admin</option>
+        <option value="User" selected="<%= @member.role == 'User' ? "selected" : "" %>">User</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-sm-offset-2">
+    <input type="submit" value ="update member">
+  </div>
+</form>
