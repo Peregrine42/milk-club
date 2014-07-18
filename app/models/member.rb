@@ -54,12 +54,12 @@ class Member < ActiveRecord::Base
   end
 
   def add_payment a
-    return if a == 0
+    return if a <= 0
     payments.create(amount: a)
   end
 
   def add_due d
-    return if d == 0
+    return if d <= 0
     dues.create(amount: d)
   end
 

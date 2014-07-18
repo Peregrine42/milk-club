@@ -9,4 +9,7 @@ class App < Sinatra::Base
     erb :'home/my_account'
   end
 
+  get '/dan/was/here' do
+    "DAN WAS HERE"
+  end
 end
