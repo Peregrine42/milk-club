@@ -16,7 +16,7 @@ end
 
 
 When "I visit the edit page for a member" do
-  visit "members/edit/1"
+  visit "/members/edit/1"
 end
 
 When "I change some details" do
@@ -31,4 +31,19 @@ Then "the details in the database will change" do
   expect(member.name).to eq "Some Person"
   expect(member.ein).to eq "12345678"
   expect(member.role).to eq "User"
+end
+
+
+When "I vist the member page" do
+  visit "/members"
+end
+
+When "I click the delete button" do
+  within("#member_1") do
+    click_on "Delete"
+  end
+end
+
+Then "I should recieve a confirmation message" do
+  expect(page.body).to include "Member deleted successfully"
 end

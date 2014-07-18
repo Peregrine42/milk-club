@@ -8,7 +8,7 @@
   </tr>
 
   <% Member.all.each do |member| %>
-    <tr>
+    <tr id="member_<%= member.id.to_s %>">
       <td><%= member.name %> </td>
       <td><a class="btn btn-info" href="members/edit/<%= member.id %>">Edit</a></td>
       <td><a class="btn btn-danger" href="members/delete/<%= member.id %>">Delete</a></td>
