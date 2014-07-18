@@ -23,7 +23,7 @@ When "I change some details" do
   fill_in "name", with: "Some Person"
   fill_in "ein",  with: "12345678"
   select "User",  from: "role"
-  click_on "update member"
+  click_on "Update member"
 end
 
 Then "the details in the database will change" do
